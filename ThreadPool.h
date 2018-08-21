@@ -21,11 +21,14 @@ public:
         }
         _max_count = thread_count;
         _sem = new SEM::Semaphore("nick",_max_count);
+        _max = new SEM::Semaphore("nick",_max_count);
     }
 
     ~ThreadPool(){
         delete _sem;
         _sem = nullptr;
+        delete _max;
+        _max = nullptr;
     }
 
 //    template <typename F>
@@ -39,10 +42,12 @@ public:
 //    }
 
     void submit(std::function<void ()> const &f){
+        _max->wait();
         auto fun = [=]()->void{
             _sem->wait();
             f();
             _sem->signal();
+            _max->signal();
         };
         _threads.emplace_back(std::thread(fun));
     }
@@ -61,6 +66,7 @@ private:
     std::vector<std::thread> _threads;
     unsigned _max_count;
     SEM::Semaphore *_sem;
+    SEM::Semaphore *_max;
 };
 
 #endif //THREADPOOL_H
