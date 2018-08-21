@@ -80,13 +80,13 @@ namespace SEM {
             return _name;
         }
 
-        /**
-         * 重载<<,输出信号量的信息
-         * @param out 输出流
-         * @param sem 信号量
-         * @return 输出流
-         */
-        friend std::ostream &operator<<(std::ostream &out,Semaphore &sem);
+//        /**
+//         * 重载<<,输出信号量的信息
+//         * @param out 输出流
+//         * @param sem 信号量
+//         * @return 输出流
+//         */
+//        friend std::ostream &operator<<(std::ostream &out,Semaphore &sem);
 
     private:
         int _count;                             //等待线程数量
@@ -96,8 +96,8 @@ namespace SEM {
     };
 
 
-    std::ostream &operator<<(std::ostream &out, Semaphore &sem) {
-        out<<"Semaphore:"<<sem._name<<",Waiting threads count:"<<sem._count<<std::endl;
-        return out;
-    }
+//    std::ostream &operator<<(std::ostream &out, Semaphore &sem) {
+//        out<<"Semaphore:"<<sem._name<<",Waiting threads count:"<<sem._count<<std::endl;
+//        return out;
+//    }
 };

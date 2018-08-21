@@ -1,6 +1,6 @@
 #include <iostream>
-#include "ThreadPool/ThreadPool.h"
-#include "ThreadPool/timer_std.h"
+#include "ThreadPool.h"
+#include "timer.h"
 #include <functional>
 #include <typeinfo>
 
