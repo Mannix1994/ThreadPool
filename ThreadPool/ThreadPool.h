@@ -8,12 +8,13 @@
 #include <thread>
 #include <vector>
 #include <chrono>
+#include <functional>
 #include "Semaphore.h"
 
 class ThreadPool{
 public:
     explicit ThreadPool(unsigned thread_count){
-        unsigned max_thread_count = std::thread::hardware_concurrency()-1;
+        unsigned max_thread_count = std::thread::hardware_concurrency();
         if(thread_count>max_thread_count){
             fprintf(stderr,"thread_count超过CPU核心数\n");
             _max_count = max_thread_count;
@@ -27,10 +28,18 @@ public:
         _sem = nullptr;
     }
 
+//    template <typename F>
+//    void submit(F const &f){
+//        auto fun = [=]()->void{
+//            _sem->wait();
+//            f();
+//            _sem->signal();
+//        };
+//        _threads.emplace_back(std::thread(fun));
+//    }
 
-    template <typename F>
-    void submit(F const &f){
-        auto fun = [&]()->void{
+    void submit(std::function<void ()> const &f){
+        auto fun = [=]()->void{
             _sem->wait();
             f();
             _sem->signal();
