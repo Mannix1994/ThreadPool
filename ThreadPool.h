@@ -58,7 +58,9 @@ public:
     }
 
     void submit(std::function<void ()> const &f){
+        _mutex.lock();
         _funcs.push(f);
+        _mutex.unlock();
         _sem->signal();
     }
 
