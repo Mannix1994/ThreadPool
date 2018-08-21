@@ -19,7 +19,6 @@ int main() {
         printf("id:%d\n",b);
     };
     tp.submit(f1);
-    timer.log();
 
     for(int i=11;i<20;i++){
         auto ff = [=](){
