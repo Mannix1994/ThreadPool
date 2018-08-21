@@ -31,15 +31,19 @@ public:
         _max = nullptr;
     }
 
-//    template <typename F>
-//    void submit(F const &f){
-//        auto fun = [=]()->void{
-//            _sem->wait();
-//            f();
-//            _sem->signal();
-//        };
-//        _threads.emplace_back(std::thread(fun));
-//    }
+    /*
+    template <typename F>
+    void submit(F const &f){
+        _max->wait();
+        auto fun = [=]()->void{
+            _sem->wait();
+            f();
+            _sem->signal();
+            _max->signal();
+        };
+        _threads.emplace_back(std::thread(fun));;
+    }
+     */
 
     void submit(std::function<void ()> const &f){
         _max->wait();
