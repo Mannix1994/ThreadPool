@@ -30,6 +30,32 @@ int main() {
     timer.log();
     tp.join();
     timer.log();
+
+    ////////////////////////////////////////////////////////////////////////
+    int *a = new int[20];
+    auto task0 = [=](){
+        for (int i=0;i<10;i++){
+            a[i] = i * 10;
+        }
+    };
+    tp.submit(task0);
+
+    auto task1 = [=](){
+        for (int i=10;i<20;i++){
+            a[i] = i * (-1);
+        }
+    };
+    tp.submit(task1);
+    tp.join();
+
+    //! must read object a after call tp.join()
+    for (int i=0;i<20;i++){
+        std::cout<<a[i]<<" ";
+    }
+    std::cout<<std::endl;
+    delete[] a;
+    a = nullptr;
+
     std::cout << "Hello, World!" << std::endl;
     return 0;
 }
