@@ -6,7 +6,6 @@
 
 int main() {
     ThreadPool tp(10);
-    Timer timer;
     int  b = 0;
     auto f = [=](){
         std::this_thread::sleep_for(std::chrono::milliseconds(b*200));
@@ -27,9 +26,7 @@ int main() {
         };
         tp.submit(ff);
     }
-    timer.log();
     tp.join();
-    timer.log();
 
     ////////////////////////////////////////////////////////////////////////
     int *a = new int[20];
@@ -57,5 +54,7 @@ int main() {
     a = nullptr;
 
     std::cout << "Hello, World!" << std::endl;
+
+    tp.kill();
     return 0;
 }

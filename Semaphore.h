@@ -1,6 +1,8 @@
 /**
  * semaphore类似于一个信号量类，利用mutex和condition_variable来实现
  */
+#ifndef SEMAPHORE_H
+#define SEMAPHORE_H
 #include <mutex>
 #include <condition_variable>
 #include <string>
@@ -101,3 +103,4 @@ namespace SEM {
 //        return out;
 //    }
 };
+#endif
