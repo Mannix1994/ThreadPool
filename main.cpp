@@ -19,7 +19,7 @@ int main() {
     };
     tp.submit(f1);
 
-    for(int i=11;i<20;i++){
+    for(int i=2;i<10;i++){
         auto ff = [=](){
             std::this_thread::sleep_for(std::chrono::milliseconds(i*200));
             printf("id:%d\n",i);
@@ -27,8 +27,17 @@ int main() {
         tp.submit(ff);
     }
     tp.join();
+    printf("tp.join();\n");
 
-    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    auto task = [](){
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+    };
+    tp.submit(task);
+    tp.join();
+    printf("tp.join();\n");
+
+    ////////////////////////////////////////////////////////
     int *a = new int[20];
     auto task0 = [=](){
         for (int i=0;i<10;i++){
@@ -44,6 +53,7 @@ int main() {
     };
     tp.submit(task1);
     tp.join();
+    printf("tp.join();\n");
 
     //! must read object a after call tp.join()
     for (int i=0;i<20;i++){

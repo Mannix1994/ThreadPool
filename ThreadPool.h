@@ -23,14 +23,12 @@ public:
         }else
             _max_thread_count = thread_count;
         _sem = new SEM::Semaphore("nick",0);
-//        _sem_continue_run = new SEM::Semaphore("nick",0);
         _continue_run = true;
         _running_thread = 0;
         killed = false;
 
         auto caller = [=](){
             while (true){
-//                _sem_continue_run->signal();
                 _sem->wait();
                 _running_thread++;
                 if(!_continue_run){
@@ -45,7 +43,7 @@ public:
             }
         };
         for(int i=0;i<_max_thread_count;i++){
-            _threads.push_back(std::thread(caller));
+            _threads.emplace_back(std::thread(caller));
         }
     }
 
@@ -53,8 +51,6 @@ public:
         kill();
         delete _sem;
         _sem = nullptr;
-//        delete _sem_continue_run;
-//        _sem_continue_run = nullptr;
     }
 
     void submit(std::function<void ()> const &f){
@@ -65,11 +61,9 @@ public:
     }
 
     void join(){
-//        for(int i =0;i<_max_thread_count;i++){
-//            _sem_continue_run->wait();
-//        }
+        std::this_thread::sleep_for(std::chrono::microseconds(100));
         while (_running_thread>0){
-            std::this_thread::sleep_for(std::chrono::microseconds(100));
+            std::this_thread::sleep_for(std::chrono::microseconds(50));
         }
     }
 
@@ -96,7 +90,6 @@ private:
     std::vector<std::thread> _threads;
     unsigned _max_thread_count;
     SEM::Semaphore *_sem;
-//    SEM::Semaphore *_sem_continue_run;
 
     std::queue<std::function<void ()> > _funcs;
     std::mutex _mutex;
