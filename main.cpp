@@ -8,26 +8,26 @@ int main() {
     ThreadPool tp(10);
     int  b = 0;
     auto f = [=](){
-        std::this_thread::sleep_for(std::chrono::milliseconds(b*200));
+        //std::this_thread::sleep_for(std::chrono::milliseconds(b*200));
         printf("id:%d\n",b);
     };
     tp.submit(f);
     b++;
     auto f1 = [=](){
-        std::this_thread::sleep_for(std::chrono::milliseconds(b*200));
+        //std::this_thread::sleep_for(std::chrono::milliseconds(b*200));
         printf("id:%d\n",b);
     };
     tp.submit(f1);
 
-    for(int i=2;i<10;i++){
-        auto ff = [=](){
-            std::this_thread::sleep_for(std::chrono::milliseconds(i*200));
-            printf("id:%d\n",i);
+    for(int i=2;i<15;i++){
+        auto ff = [i](){
+            //std::this_thread::sleep_for(std::chrono::milliseconds(i*200));
+			printf("id:%d\n", i);
         };
         tp.submit(ff);
     }
     tp.join();
-	std::this_thread::sleep_for(std::chrono::milliseconds(5 * 200));
+	std::this_thread::sleep_for(std::chrono::milliseconds(200));
     printf("tp.join();\n");
 
     ////////////////////////////////////////////////////////
@@ -67,5 +67,6 @@ int main() {
     std::cout << "Hello, World!" << std::endl;
 
     tp.kill();
+	getchar();
     return 0;
 }

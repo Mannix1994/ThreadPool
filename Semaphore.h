@@ -1,5 +1,5 @@
 /**
- * semaphore类似于一个信号量类，利用mutex和condition_variable来实现
+ * this is a semaphore, bases on C++11
  */
 #ifndef SEMAPHORE_H
 #define SEMAPHORE_H
@@ -19,7 +19,7 @@ namespace SEM {
         Semaphore &operator=(const Semaphore &semaphore) = delete;
 
         /**
-         * 相当于信号量机制里面的P操作.
+         * P operation
          * _count大于0(有资源)时,函数会立即返回,否则会阻塞调用此函数的线程.
          */
         void wait() {

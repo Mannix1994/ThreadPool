@@ -19,15 +19,15 @@ public:
     }
 
     /**
-    * 启动计时
+    * restart timer
     */
     inline void restart() {
         _start_time = std::chrono::steady_clock::now();
     }
 
     /**
-    * 结束计时
-    * @return 返回ms数
+    * stop timing
+    * @return elapsed time, the unit is ms
     */
     inline double elapsed(bool restart = false) {
         _end_time = std::chrono::steady_clock::now();
@@ -38,19 +38,19 @@ public:
     }
 
     /**
-     * 打印时间并重启计时器
-     * @param tip 提示
+     * print elapsed time with the unit of ms, then restart timer
+     * @param tip prefix of time
      */
     void rlog(const std::string &tip){
         log(true,tip,true,false);
     }
 
     /**
-    * 打印时间
-    * @param reset 输出之后是否重启计时器，true重启，false不重启
-    * @param unit_ms true是ms，false是s
-    * @param tip 输出提示
-    * @param kill 输出之后是否退出程序，true退出，false不退出
+    * print elapsed time
+    * @param reset if true, restart timer
+    * @param unit_ms uf true, the unit of time is ms.or false,the unit of time is s
+    * @param tip prefix of time
+    * @param kill is true, after print time, exit program
     */
     void log(bool reset = false, const std::string &tip = "",
              bool unit_ms = true, bool kill = false
