@@ -65,6 +65,5 @@ int main() {
 
     std::cout << "Hello, World!" << std::endl;
 
-    tp.kill();
     return 0;
 }
