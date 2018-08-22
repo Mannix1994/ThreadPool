@@ -5,7 +5,7 @@
 #include <typeinfo>
 
 int main() {
-    ThreadPool tp(10);
+    ThreadPool tp(6);
     int  b = 0;
     auto f = [=](){
         std::this_thread::sleep_for(std::chrono::milliseconds(b*200));

@@ -12,7 +12,6 @@
 #include <queue>
 #include <atomic>
 #include "Semaphore.h"
-#include "timer.h"
 
 class ThreadPool{
 public:
@@ -32,31 +31,37 @@ public:
     }
 
     void submit(std::function<void ()> const &f){
-        _funcs.push(f);
+        auto task = [=]()->bool{
+            f();
+            return true;
+        };
+        _funcs.push(task);
         _sem->signal();
     }
 
     void join(){
-//        Timer timer;
+        for(int i=0;i<_max_thread_count;i++){
+            auto task = [=]()->bool{
+                return false;
+            };
+            _funcs.push(task);
+            _sem->signal();
+        }
+
         auto caller = [&](){
             while (true){
-//                _mutex.lock();
-                bool empty = _funcs.empty();
-//                _mutex.unlock();
-                if(empty)
-                    break;
                 _sem->wait();
                 _mutex.lock();
-                std::function<void ()> f = _funcs.front();
+                std::function<bool ()> f = _funcs.front();
                 _funcs.pop();
                 _mutex.unlock();
-                f();
+                if(!f())
+                    break;
             }
         };
         for(int i=0;i<_max_thread_count;i++){
             _threads.emplace_back(std::thread(caller));
         }
-//        timer.log();
 
         for(auto& t :_threads)
         {
@@ -74,7 +79,7 @@ private:
     unsigned _max_thread_count;
     SEM::Semaphore *_sem;
 
-    std::queue<std::function<void ()> > _funcs;
+    std::queue<std::function<bool ()> > _funcs;
     std::mutex _mutex;
 };
 
