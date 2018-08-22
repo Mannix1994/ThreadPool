@@ -24,8 +24,6 @@ public:
         }else
             _max_thread_count = thread_count;
         _sem = new SEM::Semaphore("nick",0);
-        _continue_run = true;
-        killed = false;
     }
 
     ~ThreadPool(){
@@ -39,7 +37,7 @@ public:
     }
 
     void join(){
-        Timer timer;
+//        Timer timer;
         auto caller = [&](){
             while (true){
 //                _mutex.lock();
@@ -58,7 +56,7 @@ public:
         for(int i=0;i<_max_thread_count;i++){
             _threads.emplace_back(std::thread(caller));
         }
-        timer.log();
+//        timer.log();
 
         for(auto& t :_threads)
         {
@@ -78,9 +76,6 @@ private:
 
     std::queue<std::function<void ()> > _funcs;
     std::mutex _mutex;
-    std::atomic_bool _continue_run;
-//    std::atomic_uint _running_thread;
-    bool killed;
 };
 
 #endif //THREADPOOL_H
