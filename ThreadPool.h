@@ -12,6 +12,7 @@
 #include <queue>
 #include <atomic>
 #include "Semaphore.h"
+#include "timer.h"
 
 class ThreadPool{
 public:
@@ -38,11 +39,12 @@ public:
     }
 
     void join(){
-        auto caller = [=](){
+        Timer timer;
+        auto caller = [&](){
             while (true){
-                _mutex.lock();
+//                _mutex.lock();
                 bool empty = _funcs.empty();
-                _mutex.unlock();
+//                _mutex.unlock();
                 if(empty)
                     break;
                 _sem->wait();
@@ -56,6 +58,7 @@ public:
         for(int i=0;i<_max_thread_count;i++){
             _threads.emplace_back(std::thread(caller));
         }
+        timer.log();
 
         for(auto& t :_threads)
         {
