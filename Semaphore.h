@@ -1,5 +1,7 @@
 /**
- * this is a semaphore, bases on C++11
+ * this is a semaphore, based on C++11.
+ * I will write some Chinese comments in this file, if you don't understand,
+ * that's ok, you can look the code directly.
  */
 #ifndef SEMAPHORE_H
 #define SEMAPHORE_H
@@ -19,10 +21,14 @@ namespace SEM {
         Semaphore &operator=(const Semaphore &semaphore) = delete;
 
         /**
-         * P operation
+         * P operation.
+         * if --_count is bigger than 0, it will return immediately.
+         * if --_count is smaller than 0 or equal with 0, it will block
+         * the thread which call this function until a signal() or
+         * signalAll() is called.
          * _count大于0(有资源)时,函数会立即返回,否则会阻塞调用此函数的线程.
          */
-        void wait() {
+        inline void wait() {
             std::unique_lock<std::mutex> lock(_mutex);
             //std::cout<<_name+":"<<_count<<std::endl;
             if (--_count < 0) { // 资源不够
@@ -31,12 +37,17 @@ namespace SEM {
         }
 
         /**
-         * 相当于信号量机制里面的P操作.
+         * P operation.
+         * if --_count is bigger than 0, it will return immediately.
+         * if --_count is smaller than 0 or equal with 0, it will block
+         * the thread which call this function until a signal(),signalAll()
+         * is called or after ms microseconds.
+         * After waiting ms microseconds, this function will return.
          * _count大于0(有资源)时,函数会立即返回,否则会阻塞调用此函数的线程.
          * 但如果等待时间超过seconds指定的值，会唤醒所有阻塞线程.
          * @param ms 等待时间(ms)
          */
-        void wait(int ms) {
+        inline void wait(int ms) {
             assert(ms > 0);
             std::unique_lock<std::mutex> lock(_mutex);
             //std::cout<<_name+":"<<_count<<std::endl;
@@ -53,10 +64,12 @@ namespace SEM {
         }
 
         /**
+         * V Operation.
+         * weak one thread which blocked on _condition
          * 如果有阻塞的线程,则随机唤醒一个线程，相当于信号量机制里面的V操作.否则
          * 立即返回.
          */
-        void signal() {
+        inline void signal() {
             std::lock_guard<std::mutex> lock(_mutex);
             if (++_count <= 0) {
                 _condition.notify_one();
@@ -64,9 +77,11 @@ namespace SEM {
         }
 
         /**
+         * V Operation.
+         * weak all threads which blocked on _condition
          * 如果有线程阻塞,唤醒阻塞的所有线程;否则立即返回.
          */
-        void signalAll() {
+        inline void signalAll() {
             std::lock_guard<std::mutex> lock(_mutex);
             while (++_count <= 0) {
                 _condition.notify_one();
@@ -75,20 +90,13 @@ namespace SEM {
         }
 
         /**
+         * name of semaphore
          * 返回这个信号量的名字
          * @return 名字
          */
-        std::string name(){
+        inline std::string name(){
             return _name;
         }
-
-//        /**
-//         * 重载<<,输出信号量的信息
-//         * @param out 输出流
-//         * @param sem 信号量
-//         * @return 输出流
-//         */
-//        friend std::ostream &operator<<(std::ostream &out,Semaphore &sem);
 
     private:
         int _count;                             //等待线程数量
@@ -96,11 +104,5 @@ namespace SEM {
         std::condition_variable _condition;     //条件变量
         std::string _name;                      //信号量名字
     };
-
-
-//    std::ostream &operator<<(std::ostream &out, Semaphore &sem) {
-//        out<<"Semaphore:"<<sem._name<<",Waiting threads count:"<<sem._count<<std::endl;
-//        return out;
-//    }
 };
 #endif

@@ -5,23 +5,19 @@
 #include <typeinfo>
 
 int main() {
-    ThreadPool tp(10);
+    Timer timer;
+    ThreadPool tp(12);
+    timer.log();
     int  b = 0;
     auto f = [=](){
-        //std::this_thread::sleep_for(std::chrono::milliseconds(b*200));
+        std::this_thread::sleep_for(std::chrono::milliseconds(b*200));
         printf("id:%d\n",b);
     };
     tp.submit(f);
-    b++;
-    auto f1 = [=](){
-        //std::this_thread::sleep_for(std::chrono::milliseconds(b*200));
-        printf("id:%d\n",b);
-    };
-    tp.submit(f1);
 
-    for(int i=2;i<15;i++){
+    for(int i=1;i<15;i++){
         auto ff = [i](){
-            //std::this_thread::sleep_for(std::chrono::milliseconds(i*200));
+            std::this_thread::sleep_for(std::chrono::milliseconds(i*100));
 			printf("id:%d\n", i);
         };
         tp.submit(ff);
@@ -67,6 +63,5 @@ int main() {
     std::cout << "Hello, World!" << std::endl;
 
     tp.kill();
-	getchar();
     return 0;
 }
