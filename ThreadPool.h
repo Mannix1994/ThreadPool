@@ -51,10 +51,10 @@ public:
                     return;
                 }
                 // get a task from task queue
-                _mutex.lock();
+                _mutex_for_task.lock();
                 std::function<bool ()> task = _tasks.front();
                 _tasks.pop();
-                _mutex.unlock();
+                _mutex_for_task.unlock();
                 // run task
                 bool is_empty_task = task();
                 // if task is a empty task
@@ -77,7 +77,7 @@ public:
     /**
      * submit a task
      * 提交一个任务
-     * @param task a lambda expression without return type return or
+     * @param task a lambda expression without return or
      * a std::function<void ()> object.
      */
     void submit(std::function<void ()> const &task){
@@ -85,14 +85,14 @@ public:
 			task();
 			return false;// task pushed by submit() is not a empty task
 		};
-        _mutex.lock();
+        _mutex_for_task.lock();
         _tasks.push(proxy);
-        _mutex.unlock();
+        _mutex_for_task.unlock();
         _sem_more_task->signal();
     }
 
     /**
-     * wait all task submitted finished.
+     * wait until all submitted task finished.
      * 等待所有提交的任务完成.
      */
     void join(){
@@ -101,13 +101,13 @@ public:
         };
         // push _max_thread_count empty task to task queue, when
         // a thread execute a empty task, it will block itself.
-        _mutex.lock();
+        _mutex_for_task.lock();
         for (unsigned i = 0; i<_max_thread_count; i++){
 
 			_tasks.emplace(task);
 			_sem_more_task->signal();
 		}
-        _mutex.unlock();
+        _mutex_for_task.unlock();
 
         // wait until all the thread execute a empty task and
         // call _sem_sync->signal().
@@ -162,14 +162,14 @@ public:
     }
 
 private:
+    unsigned _max_thread_count;
     std::vector<std::thread> _threads;
     std::vector<SEM::Semaphore *> _sem_for_every_thread;
-    unsigned _max_thread_count;
     SEM::Semaphore *_sem_more_task;
 	SEM::Semaphore *_sem_sync;
 
     std::queue<std::function<bool ()> > _tasks;
-    std::mutex _mutex;
+    std::mutex _mutex_for_task;
     std::atomic_bool _continue_run;
     bool killed;
 };
