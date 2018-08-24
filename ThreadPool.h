@@ -122,7 +122,9 @@ public:
     }
 
     /**
-     * kill all the threads
+     * kill all the threads.
+     * this function will be called in deconstruct function,so you do not
+     * need to call this function.
      */
     void kill(){
         // if kill() is called, return
