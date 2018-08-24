@@ -10,7 +10,6 @@ int main() {
     timer.log();
     for(auto i=0;i<100;i++){
         auto task = [=](){
-
         };
         tp.submit(task);
     }
